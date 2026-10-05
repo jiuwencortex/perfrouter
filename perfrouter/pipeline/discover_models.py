@@ -20,6 +20,7 @@ Usage:
 import argparse
 import os
 import re
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -182,6 +183,15 @@ def derive_aa_slug(or_id: str, aa_index: dict[str, dict]) -> str | None:
     if lookup_aa(aa_index, norm) is not None:
         return norm
 
+    # 3. AA-style variants: dots → dashes, provider-prefixed, "-reasoning" suffix
+    provider = base_id.split("/", 1)[0]
+    stems = [raw_slug.lower().replace(".", "-").replace("_", "-")]
+    stems.append(f"{provider}-{stems[0]}")
+    for stem in stems:
+        for cand in (stem, f"{stem}-reasoning"):
+            if lookup_aa(aa_index, cand) is not None:
+                return cand
+
     return None
 
 
@@ -312,6 +322,7 @@ def discover(
     dry_run:     bool,
     force:       bool,
     verbose:     bool,
+    reset:       bool = False,
 ) -> int:
     """Core discovery routine. Returns 0 on success, 1 on fatal error."""
 
@@ -323,6 +334,11 @@ def discover(
     header, cfg       = read_yaml_with_header(models_yaml)
     discovery_cfg     = cfg.get("discovery", {})
     existing_models   = cfg.get("models") or []
+    if reset:
+        n_drop = sum(1 for m in existing_models if m.get("_discovered"))
+        existing_models = [m for m in existing_models if not m.get("_discovered")]
+        print(f"\n  --reset: dropping {n_drop} auto-discovered entr{'y' if n_drop == 1 else 'ies'}, "
+              f"keeping {len(existing_models)} manual")
     existing_ids: set[str] = {m["id"] for m in existing_models}
 
     pool_size:     int        = discovery_cfg.get("pool_size", 50)
@@ -382,6 +398,8 @@ def discover(
             continue
         if or_id in model_blocklist:
             continue
+        if or_id.endswith(":batch"):
+            continue   # batch endpoints duplicate the base model's AA slug
         if or_id in existing_ids:
             n_existing += 1
             continue
@@ -443,9 +461,14 @@ def discover(
         print("\n  DRY RUN — nothing written.")
         return 0
 
-    if not to_add:
+    if not to_add and not reset:
         print("\n  Nothing to add.")
         return 0
+
+    if reset:
+        backup = models_yaml.with_suffix(".yaml.bak")
+        shutil.copy2(models_yaml, backup)
+        print(f"\n  Backup → {backup}")
 
     # ── Append to models.yaml ─────────────────────────────────────────────────
     _SCRATCH = {"_score", "_aa_idx", "_elo"}
@@ -491,6 +514,11 @@ def main() -> None:
         help="Re-discover even if pool_size already reached",
     )
     parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="Drop all auto-discovered entries (keep manual) and re-discover from scratch",
+    )
+    parser.add_argument(
         "--verbose",
         action="store_true",
         help="Print per-model scoring details",
@@ -508,6 +536,7 @@ def main() -> None:
         dry_run=args.dry_run,
         force=args.force,
         verbose=args.verbose,
+        reset=args.reset,
     )
     sys.exit(rc)
 

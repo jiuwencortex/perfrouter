@@ -430,10 +430,10 @@ def main():
                     warn(f"{label:<25} {path.name}  (not produced)")
 
             print(f"\n  To deploy in optmod:")
-            print(f"    cp {router_out} ~/workspace/optmod/routers/")
-            print(f"    cp {features}   ~/workspace/optmod/routers/")
-            print(f"    cp {registry}   ~/workspace/optmod/routers/")
-            print(f"    cp {taxonomy}   ~/workspace/optmod/routers/")
+            print(f"    cp {router_out} ~/workspace/optmod/routing/perfrouter/")
+            print(f"    cp {features}   ~/workspace/optmod/routing/perfrouter/")
+            print(f"    cp {registry}   ~/workspace/optmod/routing/perfrouter/")
+            print(f"    cp {taxonomy}   ~/workspace/optmod/routing/perfrouter/")
 
         print()
 

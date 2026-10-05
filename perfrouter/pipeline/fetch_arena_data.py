@@ -144,6 +144,9 @@ VENDOR_MAP = {
     "tencent":   ["tencent", "hunyuan"],
     "xiaomi":    ["xiaomi", "mimo"],
     "moonshot":  ["moonshot", "kimi"],
+    "moonshotai": ["moonshot", "kimi"],
+    "z-ai":      ["z.ai", "zhipu"],
+    "minimax":   ["minimax"],
 }
 
 def vendor_of(model_id: str) -> str | None:
@@ -170,72 +173,49 @@ def vendors_match(registry_id: str, arena_vendor: str) -> bool:
 
 # ── Model matching ────────────────────────────────────────────────────────────
 
+# Effort/harness suffixes Arena appends to a model name; not part of identity.
+_EFFORT = {"low", "medium", "high", "xhigh", "max", "harness"}
+_STOP   = {"free", "preview", "latest", "thinking", "search", "grounding",
+           "experimental", "non", "reasoning", "api", "chat", "instruct"}
+
+
+def _identity_tokens(name: str) -> tuple[str, ...]:
+    """
+    Ordered identity tokens of a model name, version digits preserved in order.
+    Drops parenthetical notes, effort levels, stopwords and 8-digit date stamps.
+    "claude-opus-5.5-high" → (claude, opus, 5, 5)   "gpt-5-mini" → (gpt, 5, mini)
+    """
+    name = re.sub(r"\(.*?\)", " ", name.lower())
+    toks = [t for t in normalise_name(name).split("_") if t]
+    return tuple(t for t in toks
+                 if t not in _EFFORT and t not in _STOP
+                 and not re.fullmatch(r"\d{8}", t))
+
+
 def find_arena_match(
     registry_model: dict,
     arena_models: list[dict],
 ) -> dict | None:
     """
-    Find the best matching Arena model for a registry model.
+    Find the Arena entry for a registry model.
 
-    Strict matching — only returns a match when confident.
-    We prefer false negatives (None) over false positives (wrong model).
-
-    registry_model: entry from model_registry.json
-    arena_models:   list of {rank, model, vendor, score, ci, votes} from Arena API
+    Strict: the ordered identity tokens (including version digits) must be
+    identical, so "claude-opus-5" never matches "claude-opus-5.5-high" and
+    "gpt-5" never matches "gpt-5.6-sol-xhigh". Arena lists several effort
+    levels of one model; the highest-scoring entry is used.
+    Prefers false negatives over false positives.
     """
-    reg_id     = registry_model["id"]
-
-    # Extract the local model name (after the last /) without version suffixes
-    # e.g. "anthropic/claude-sonnet-4.6" → "claude_sonnet_4_6"
-    # e.g. "openai/gpt-4o-mini"          → "gpt_4o_mini"
-    local_name = normalise_name(reg_id.split("/")[-1].split(":")[0])
-
-    # Stopwords — tokens that appear in many model names and don't discriminate
-    # Stopwords — truly generic tokens that appear everywhere and don't discriminate
-    # Note: "flash", "pro", "mini", "lite" are NOT here — they distinguish model variants
-    STOP = {"free", "preview", "latest", "thinking", "high", "search",
-            "grounding", "experimental", "non", "reasoning", "api",
-            "chat", "instruct", "v1", "v2", "v3"}
-
-    # Key tokens — the tokens that actually identify this specific model
-    # We require ALL key tokens to be present in the Arena name
-    raw_tokens = set(local_name.split("_")) - STOP - {""}
-
-    # Must have at least 2 meaningful tokens to attempt matching
-    if len(raw_tokens) < 1:
+    reg_id = registry_model["id"]
+    ours   = _identity_tokens(reg_id.split("/")[-1].split(":")[0])
+    if not ours:
         return None
 
-    best_match = None
-    best_shared = 0
-
-    for arena_m in arena_models:
-        arena_name   = arena_m["model"]
-        arena_norm   = normalise_name(arena_name)
-        arena_vendor = arena_m.get("vendor", "")
-        arena_tokens = set(arena_norm.split("_")) - STOP - {""}
-
-        # Vendor must match — hard requirement
-        if not vendors_match(reg_id, arena_vendor):
-            continue
-
-        # Pass 1: exact match on normalised local name (best case)
-        if local_name == arena_norm:
-            return arena_m
-
-        # Pass 2: Arena name must START WITH our key tokens
-        # e.g. "kimi_k2_6" matches "kimi_k2_6" but not "kimi_k1"
-        # This prevents "deepseek_v4_flash" matching "deepseek_v4_pro_thinking"
-        shared = raw_tokens & arena_tokens
-        n_shared = len(shared)
-
-        # Require that ALL our non-stop tokens appear in the Arena name
-        # This is the key strictness: we don't match if the Arena model
-        # has extra disambiguating tokens that differ from ours
-        if shared == raw_tokens and n_shared > 0 and n_shared > best_shared:
-            best_match  = arena_m
-            best_shared = n_shared
-
-    return best_match
+    matches = [
+        m for m in arena_models
+        if vendors_match(reg_id, m.get("vendor", ""))
+        and _identity_tokens(m["model"]) == ours
+    ]
+    return max(matches, key=lambda m: m.get("score") or 0) if matches else None
 
 
 # ── ELO normalisation ─────────────────────────────────────────────────────────

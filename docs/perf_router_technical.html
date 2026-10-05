@@ -13,18 +13,18 @@ MathJax = {
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <style>
   :root {
-    --bg:       #0f1117;
-    --surface:  #1a1d27;
-    --card:     #20232f;
-    --border:   #2e3147;
-    --accent:   #6c8ef5;
-    --accent2:  #a78bfa;
-    --green:    #4ade80;
-    --yellow:   #fbbf24;
-    --red:      #f87171;
-    --text:     #e2e8f0;
-    --muted:    #8892a4;
-    --code-bg:  #12151e;
+    --bg:       #f8f9fc;
+    --surface:  #ffffff;
+    --card:     #ffffff;
+    --border:   #dde1ec;
+    --accent:   #4361ee;
+    --accent2:  #7c3aed;
+    --green:    #16a34a;
+    --yellow:   #b45309;
+    --red:      #dc2626;
+    --text:     #1e2235;
+    --muted:    #6b7280;
+    --code-bg:  #f1f3f9;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -38,16 +38,16 @@ MathJax = {
 
   /* ── Header ── */
   header {
-    background: linear-gradient(135deg, #1a1d27 0%, #12151e 100%);
+    background: linear-gradient(135deg, #eef1fb 0%, #f8f9fc 100%);
     border-bottom: 1px solid var(--border);
     padding: 48px 64px 40px;
   }
-  header h1 { font-size: 2rem; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+  header h1 { font-size: 2rem; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
   header h1 span { color: var(--accent); }
   header p { color: var(--muted); margin-top: 8px; font-size: 1rem; max-width: 640px; }
   .tag {
     display: inline-block;
-    background: #2a2d40;
+    background: #eef0fb;
     border: 1px solid var(--border);
     color: var(--accent);
     font-size: 11px;
@@ -81,7 +81,7 @@ MathJax = {
   section h2 {
     font-size: 1.35rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--text);
     padding-bottom: 12px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 24px;
@@ -91,7 +91,7 @@ MathJax = {
   }
   section h2 .num {
     background: var(--accent);
-    color: #0f1117;
+    color: #ffffff;
     font-size: 12px;
     font-weight: 700;
     width: 24px;
@@ -113,12 +113,13 @@ MathJax = {
     padding: 20px 24px;
     margin: 16px 0;
   }
-  .card.highlight { border-color: var(--accent); background: #181b2a; }
+  .card.highlight { border-color: var(--accent); background: #f0f4ff; }
+  .card.cv-highlight { border-color: var(--green); background: #f0faf4; }
 
   /* ── Formula boxes ── */
   .formula {
     background: var(--code-bg);
-    border: 1px solid #2e3147;
+    border: 1px solid #dde1ec;
     border-left: 3px solid var(--accent);
     border-radius: 6px;
     padding: 18px 24px;
@@ -138,7 +139,7 @@ MathJax = {
   /* ── Code ── */
   code {
     background: var(--code-bg);
-    color: #93c5fd;
+    color: #3730a3;
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-size: 13px;
     padding: 2px 6px;
@@ -155,18 +156,18 @@ MathJax = {
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-size: 13px;
     line-height: 1.6;
-    color: #cbd5e1;
+    color: #334155;
   }
-  pre .c  { color: #4a5568; }
-  pre .k  { color: #a78bfa; }
-  pre .s  { color: #6ee7b7; }
-  pre .n  { color: #93c5fd; }
-  pre .num { color: #fbbf24; }
+  pre .c  { color: #94a3b8; }
+  pre .k  { color: #7c3aed; }
+  pre .s  { color: #059669; }
+  pre .n  { color: #3730a3; }
+  pre .num { color: #b45309; }
 
   /* ── Tables ── */
   table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
   th {
-    background: #1e2130;
+    background: #f0f2f9;
     color: var(--muted);
     font-size: 11px;
     letter-spacing: 0.6px;
@@ -177,7 +178,7 @@ MathJax = {
   }
   td { padding: 10px 14px; border-bottom: 1px solid #1e2130; vertical-align: top; }
   tr:last-child td { border-bottom: none; }
-  tr:hover td { background: #1e2130; }
+  tr:hover td { background: #f0f2f9; }
   td code { font-size: 12px; }
   .pill {
     display: inline-block;
@@ -186,10 +187,10 @@ MathJax = {
     font-size: 11px;
     font-weight: 600;
   }
-  .pill.a { background: #1e3a5f; color: #60a5fa; }
-  .pill.b { background: #1e3a2f; color: #4ade80; }
-  .pill.c { background: #3a2a1e; color: #fbbf24; }
-  .pill.d { background: #3a1e2f; color: #c084fc; }
+  .pill.a { background: #dbeafe; color: #1d4ed8; }
+  .pill.b { background: #dcfce7; color: #166534; }
+  .pill.c { background: #fef3c7; color: #92400e; }
+  .pill.d { background: #f3e8ff; color: #7e22ce; }
 
   /* ── Pipeline diagram ── */
   .pipeline {
@@ -199,7 +200,7 @@ MathJax = {
     margin: 24px 0;
     overflow-x: auto;
   }
-  .step {
+  .step { box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     flex: 1;
     min-width: 120px;
     background: var(--card);
@@ -227,7 +228,7 @@ MathJax = {
     font-weight: 700;
     letter-spacing: 0.5px;
   }
-  .step .sname { font-size: 12px; font-weight: 600; color: #fff; margin: 4px 0; }
+  .step .sname { font-size: 12px; font-weight: 600; color: var(--text); margin: 4px 0; }
   .step .sout  { font-size: 11px; color: var(--muted); }
 
   /* ── Feature group grid ── */
@@ -256,28 +257,48 @@ MathJax = {
 
   /* ── Callout ── */
   .callout {
-    background: #181f2e;
-    border: 1px solid #2a3a5e;
+    background: #eff3ff;
+    border: 1px solid #c7d2fe;
     border-left: 3px solid var(--accent);
     border-radius: 6px;
     padding: 14px 18px;
     margin: 16px 0;
     font-size: 14px;
-    color: #93c5fd;
+    color: #3730a3;
   }
-  .callout.warn { border-left-color: var(--yellow); background: #1e1a10; color: var(--yellow); }
-  .callout strong { color: #fff; }
+  .callout.warn { border-left-color: var(--yellow); background: #fffbeb; color: var(--yellow); }
+  .callout.info-green { border-left-color: var(--green); background: #f0faf4; color: #166534; }
+  .callout strong { color: var(--text); }
 
   /* ── Routing modes ── */
   .mode-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 16px 0; }
   .mode-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-  .mode-card .mode-title { font-weight: 700; font-size: 13px; margin-bottom: 6px; color: #fff; }
+  .mode-card .mode-title { font-weight: 700; font-size: 13px; margin-bottom: 6px; color: var(--text); }
   .mode-card .mode-cond  { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
   .mode-card .mode-action { font-size: 12px; color: var(--text); }
 
   /* ── Two-col ── */
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
-  @media(max-width:700px) { .two-col,.mode-grid { grid-template-columns:1fr; } }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+  @media(max-width:700px) { .two-col,.three-col,.mode-grid { grid-template-columns:1fr; } }
+
+  /* ── CV fold table ── */
+  .cv-table td.good { color: var(--green); font-weight: 600; }
+  .cv-table td.ok   { color: var(--yellow); }
+  .cv-table tr.summary-row td { border-top: 1px solid var(--border); font-weight: 600; color: var(--text); background: #f0f2f9; }
+
+  /* ── Metric badge ── */
+  .metric-badge {
+    display: inline-block;
+    background: #f0faf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    padding: 10px 16px;
+    text-align: center;
+    min-width: 100px;
+  }
+  .metric-badge .val { font-size: 1.4rem; font-weight: 700; color: var(--green); line-height: 1.2; }
+  .metric-badge .lbl { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; margin-top: 2px; }
 
   /* ── Divider ── */
   hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
@@ -296,9 +317,10 @@ MathJax = {
        (quality − α × cost) with no LLM call at inference time.</p>
     <span class="tag">XGBoost</span>
     <span class="tag">sentence-BERT</span>
-    <span class="tag">10 models</span>
+    <span class="tag">50–80 models</span>
     <span class="tag">33 task types</span>
     <span class="tag">46 features</span>
+    <span class="tag">10-fold CV</span>
   </div>
 </header>
 
@@ -312,6 +334,7 @@ MathJax = {
       <li><a href="#features">Feature vector (46 features)</a></li>
       <li><a href="#affinity">Affinity score formula</a></li>
       <li><a href="#training">XGBoost training</a></li>
+      <li><a href="#cv">Cross-validation</a></li>
       <li><a href="#inference">Inference &amp; routing</a></li>
       <li><a href="#config">Runtime configuration</a></li>
     </ol>
@@ -335,7 +358,7 @@ MathJax = {
     <div class="two-col">
       <div class="card">
         <h3 style="margin-top:0">Why not a neural router?</h3>
-        <p style="margin:0;font-size:14px">With 10 models × 33 task types = 330 training rows, a neural network would overfit badly. XGBoost handles small datasets naturally via built-in L1/L2 regularisation, deals with missing features natively (NaN), and produces feature importances for interpretability.</p>
+        <p style="margin:0;font-size:14px">With 50–80 models × 33 task types = 1,650–2,640 training rows, XGBoost is the right fit. It handles small-to-medium datasets naturally via built-in L1/L2 regularisation, deals with missing features natively (NaN), and produces feature importances for interpretability.</p>
       </div>
       <div class="card">
         <h3 style="margin-top:0">Why sentence-BERT for classification?</h3>
@@ -379,7 +402,7 @@ MathJax = {
       </div>
       <div class="step">
         <div class="snum">Step 6</div>
-        <div class="sname">train</div>
+        <div class="sname">train + CV</div>
         <div class="sout">perf_router.pkl</div>
       </div>
     </div>
@@ -401,7 +424,7 @@ MathJax = {
           <td><code>fetch_arena_data.py</code></td>
           <td><code>model_registry.json</code></td>
           <td><code>model_registry.json</code> (updated)</td>
-          <td>Fetches wulong.dev Arena ELO leaderboard for 5 categories (text, search, code, vision, document). Normalises raw ELO to [0, 1] via min-max per category. Fills gaps where AA benchmarks have no coverage (creative writing, conversation, retrieval).</td>
+          <td>Fetches wulong.dev Arena ELO leaderboard for 5 categories (text, search, code, vision, document). Normalises raw ELO to [0, 1] via min-max per category.</td>
         </tr>
         <tr>
           <td>3</td>
@@ -429,7 +452,7 @@ MathJax = {
           <td><code>train_perf_router.py</code></td>
           <td><code>model_features.csv</code></td>
           <td><code>perf_router.pkl</code></td>
-          <td>Trains a single XGBoost regressor over all (model, task type) pairs. Serialises model + metadata.</td>
+          <td>Runs 10-fold stratified CV for unbiased evaluation, then trains the final model on all data. CV results and training metrics both saved in the checkpoint. Use <code>--no-cv</code> to skip CV for faster iteration.</td>
         </tr>
       </tbody>
     </table>
@@ -444,7 +467,7 @@ MathJax = {
 
     <div class="feat-grid">
       <div class="feat-card">
-        <div class="group-label" style="color:#60a5fa">A — Task-type affinity  <span style="color:var(--muted);font-weight:400">(33)</span></div>
+        <div class="group-label" style="color:#1d4ed8">A — Task-type affinity  <span style="color:var(--muted);font-weight:400">(33)</span></div>
         <ul>
           <li>One score per task type</li>
           <li>Weighted avg of benchmark scores</li>
@@ -453,7 +476,7 @@ MathJax = {
         </ul>
       </div>
       <div class="feat-card">
-        <div class="group-label" style="color:#4ade80">B — Structural  <span style="color:var(--muted);font-weight:400">(9)</span></div>
+        <div class="group-label" style="color:#16a34a">B — Structural  <span style="color:var(--muted);font-weight:400">(9)</span></div>
         <ul>
           <li>total_params_B</li>
           <li>active_params_B</li>
@@ -467,7 +490,7 @@ MathJax = {
         </ul>
       </div>
       <div class="feat-card">
-        <div class="group-label" style="color:#fbbf24">C — Boolean flags  <span style="color:var(--muted);font-weight:400">(5)</span></div>
+        <div class="group-label" style="color:#b45309">C — Boolean flags  <span style="color:var(--muted);font-weight:400">(5)</span></div>
         <ul>
           <li>flag_reasoning  (0/1)</li>
           <li>flag_thinking   (0/1)</li>
@@ -477,7 +500,7 @@ MathJax = {
         </ul>
       </div>
       <div class="feat-card">
-        <div class="group-label" style="color:#c084fc">D — WCB seed  <span style="color:var(--muted);font-weight:400">(3, optional)</span></div>
+        <div class="group-label" style="color:#7e22ce">D — WCB seed  <span style="color:var(--muted);font-weight:400">(3, optional)</span></div>
         <ul>
           <li>wcb_avg_score</li>
           <li>wcb_avg_score_nonzero</li>
@@ -569,9 +592,8 @@ MathJax = {
     <h2><span class="num">5</span>XGBoost training</h2>
 
     <h3>Training data construction</h3>
-    <p>One training row per (model, task type) pair. For 10 models × 33 task
-    types = up to 330 rows. Rows where a model has no data for a task type are
-    dropped.</p>
+    <p>One training row per (model, task type) pair. With 50–80 models × 33 task
+    types = 1,650–2,640 rows before dropping pairs with missing data.</p>
 
     <table>
       <thead><tr><th>Source</th><th>Label $y$</th><th>Sample weight</th><th>Condition</th></tr></thead>
@@ -595,15 +617,14 @@ MathJax = {
       <strong>WCB models (current):</strong>
       <code>deepseek/deepseek-v4-flash</code>, <code>deepseek/deepseek-v4-pro</code>,
       <code>openai/gpt-oss-120b:free</code>.
-      These models' rows receive $w = 3.0$ regardless of whether the specific
-      (model, task type) pair has a WCB score, so that their benchmark-derived
+      These models' rows receive $w = 3.0$ so that their benchmark-derived
       rows are also upweighted to maintain consistency.
     </div>
 
     <h3>Feature masking — making XGBoost task-type-aware</h3>
-    <p>This is the key design decision. A single XGBoost model is trained across
-    all 33 task types. Without intervention it would learn a global ranking
-    ("model X is always best") and ignore task-type variation.</p>
+    <p>A single XGBoost model is trained across all 33 task types. Without
+    intervention it would learn a global ranking ("model X is always best")
+    and ignore task-type variation.</p>
 
     <p>The fix: for each training row, <strong>all affinity columns are masked
     to NaN except the one corresponding to that row's task type</strong>:</p>
@@ -624,10 +645,6 @@ MathJax = {
     </div>
 
     <h3>Label normalisation (within task type)</h3>
-    <p>Without normalisation, XGBoost learns absolute quality scores and picks
-    the globally best model for everything. Per-task-type normalisation forces
-    it to learn <em>relative rankings within each task type</em>:</p>
-
     <div class="formula">
       <div class="label">Per-task-type min-max normalisation of labels</div>
       $$\tilde{y}_{m,t} = \begin{cases}
@@ -642,8 +659,8 @@ MathJax = {
       <table style="margin:0">
         <thead><tr><th>Parameter</th><th>Value</th><th>Rationale</th></tr></thead>
         <tbody>
-          <tr><td><code>n_estimators</code></td><td>200</td><td>Sufficient for ~330 rows; more trees help given high NaN rate</td></tr>
-          <tr><td><code>max_depth</code></td><td>4</td><td>Shallow trees prevent overfitting on small dataset</td></tr>
+          <tr><td><code>n_estimators</code></td><td>200</td><td>Sufficient for the dataset size; more trees help given high NaN rate from affinity masking</td></tr>
+          <tr><td><code>max_depth</code></td><td>4</td><td>Shallow trees prevent overfitting</td></tr>
           <tr><td><code>learning_rate</code></td><td>0.05</td><td>Conservative shrinkage with 200 trees</td></tr>
           <tr><td><code>subsample</code></td><td>0.8</td><td>Row sampling — additional regularisation</td></tr>
           <tr><td><code>colsample_bytree</code></td><td>0.8</td><td>Feature sampling per tree</td></tr>
@@ -654,7 +671,13 @@ MathJax = {
       </table>
     </div>
 
-    <h3>Training metrics (current model)</h3>
+    <h3>Training metrics (in-sample — see §6 for CV)</h3>
+    <div class="callout warn">
+      <strong>In-sample metrics are optimistic.</strong> Because the final model
+      trains on all data including its own training rows, these numbers reflect
+      memorisation as well as generalisation. Always use the CV metrics in §6
+      as the primary quality signal.
+    </div>
     <div class="two-col">
       <div class="card highlight">
         <table style="margin:0">
@@ -688,9 +711,166 @@ MathJax = {
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════════════════════ 6. INFERENCE -->
+  <!-- ══════════════════════════════════════════════════════════ 6. CV -->
+  <section id="cv">
+    <h2><span class="num">6</span>Cross-validation</h2>
+
+    <p>10-fold stratified cross-validation is run automatically at the start of
+    Step 6, before final model training. It is the primary signal for assessing
+    generalisation — in-sample metrics (§5) are optimistic by design.</p>
+
+    <div class="callout info-green">
+      <strong>CV is for evaluation only.</strong> The deployed
+      <code>perf_router.pkl</code> is always trained on all data. This maximises
+      coverage of model × task combinations in the final model while using CV to
+      detect overfitting without withholding any training signal.
+    </div>
+
+    <h3>Stratified split strategy</h3>
+    <p>Folds are stratified by <code>task_type</code> — every fold is guaranteed
+    to contain rows from all 33 task types. Without stratification, a fold
+    missing a task type would produce meaningless out-of-fold predictions for
+    that type, since the model would never have seen it during training.</p>
+
+    <div class="formula">
+      <div class="label">Stratified K-Fold split</div>
+      $$\text{StratifiedKFold}(k=10,\; \text{stratify}=\text{task\_type},\; \text{shuffle}=\text{True},\; \text{seed}=42)$$
+      <p style="margin-top:8px;font-size:13px;color:var(--muted)">
+        With 50–80 models × 33 task types ≈ 1,650–2,640 rows, each fold
+        contains ~165–264 rows. The same XGBoost hyperparameters and sample
+        weights are used in every fold as in the final fit.
+      </p>
+    </div>
+
+    <h3>Metrics reported per fold</h3>
+
+    <table class="cv-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Formula</th>
+          <th>What it measures</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>MAE</td>
+          <td>$\frac{1}{n}\sum|y_i - \hat{y}_i|$</td>
+          <td>Average absolute prediction error on held-out rows</td>
+        </tr>
+        <tr>
+          <td>RMSE</td>
+          <td>$\sqrt{\frac{1}{n}\sum(y_i - \hat{y}_i)^2}$</td>
+          <td>Penalises large errors more heavily than MAE</td>
+        </tr>
+        <tr>
+          <td>R²</td>
+          <td>$1 - \frac{\text{Var}(\text{residuals})}{\text{Var}(y)}$</td>
+          <td>Fraction of label variance explained by the model</td>
+        </tr>
+        <tr>
+          <td><strong>Routing accuracy</strong></td>
+          <td>$\frac{1}{|\mathcal{T}_{\text{fold}}|}\sum_{t} \mathbf{1}[\arg\max_m \hat{q}_{m,t} = \arg\max_m q_{m,t}]$</td>
+          <td>For each task type in the fold, does the predicted best model match the actual best model? <strong>This is the metric routing correctness depends on.</strong></td>
+        </tr>
+        <tr>
+          <td>OOF R²</td>
+          <td>$R^2$ over all out-of-fold predictions simultaneously</td>
+          <td>More robust than mean of per-fold R² values — computed once at the end across all held-out predictions pooled together</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Routing accuracy — the primary routing metric</h3>
+    <p>Standard regression metrics (MAE, R²) measure prediction accuracy over
+    individual rows. But PerfRouter doesn't need to predict exact scores — it
+    needs to correctly rank models within each task type. Routing accuracy
+    measures this directly:</p>
+
+    <div class="formula">
+      <div class="label">Routing accuracy per fold</div>
+      $$\text{RoutingAcc} = \frac{1}{|\mathcal{T}_{\text{fold}}|}
+        \sum_{t \in \mathcal{T}_{\text{fold}}}
+        \mathbf{1}\!\left[\underset{m}{\arg\max}\;\hat{q}_{m,t}
+        = \underset{m}{\arg\max}\;q_{m,t}\right]$$
+      <p style="margin-top:8px;font-size:13px;color:var(--muted)">
+        Only task types with ≥ 2 models in the validation fold are counted
+        (can't measure ranking with a single model). Reported as a percentage.
+      </p>
+    </div>
+
+    <h3>Automatic fold reduction guard</h3>
+    <p>If the smallest task type has fewer rows than the number of folds,
+    <code>StratifiedKFold</code> would crash. The training script automatically
+    reduces fold count to <code>min(k, min_task_type_count)</code> and prints a
+    warning. This can happen when the pool is small or a task type has sparse
+    benchmark coverage.</p>
+
+    <h3>CV results in checkpoint</h3>
+    <p>CV results are serialised into <code>perf_router.pkl</code> under the
+    <code>"cv"</code> key alongside the <code>"training"</code> key. This makes
+    them available at inference time for logging and dashboards without
+    re-running training.</p>
+
+    <pre><span class="c"># Structure of perf_router.pkl</span>
+{
+  <span class="s">"model"</span>:        <span class="n">XGBRegressor</span>,
+  <span class="s">"feature_cols"</span>: [...],
+  <span class="s">"task_types"</span>:   [...],
+  <span class="s">"model_ids"</span>:    [...],
+  <span class="s">"cost_weight"</span>:  <span class="num">0.3</span>,
+  <span class="s">"training"</span>: {
+    <span class="s">"n_rows"</span>:          <span class="num">2580</span>,
+    <span class="s">"wcb_rows"</span>:         <span class="num">89</span>,
+    <span class="s">"benchmark_rows"</span>:   <span class="num">2491</span>,
+    <span class="s">"in_sample_mae"</span>:    <span class="num">0.083</span>,
+    <span class="s">"in_sample_rmse"</span>:   <span class="num">0.112</span>,
+    <span class="s">"in_sample_r2"</span>:     <span class="num">0.871</span>,
+  },
+  <span class="s">"cv"</span>: {
+    <span class="s">"n_folds"</span>:          <span class="num">10</span>,
+    <span class="s">"mean_mae"</span>:         <span class="num">0.121</span>,
+    <span class="s">"std_mae"</span>:          <span class="num">0.014</span>,
+    <span class="s">"mean_rmse"</span>:        <span class="num">0.158</span>,
+    <span class="s">"std_rmse"</span>:         <span class="num">0.018</span>,
+    <span class="s">"mean_r2"</span>:          <span class="num">0.743</span>,
+    <span class="s">"std_r2"</span>:           <span class="num">0.031</span>,
+    <span class="s">"mean_routing_acc"</span>: <span class="num">0.812</span>,
+    <span class="s">"std_routing_acc"</span>:  <span class="num">0.044</span>,
+    <span class="s">"oof_r2"</span>:           <span class="num">0.739</span>,
+    <span class="s">"fold_mae"</span>:         [...],
+    <span class="s">"fold_routing_acc"</span>: [...],
+  }
+}</pre>
+
+    <h3>CLI flags</h3>
+    <table>
+      <thead><tr><th>Flag</th><th>Default</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>--cv-folds N</code></td>
+          <td><code>10</code></td>
+          <td>Number of CV folds. Reduce for faster iteration during development.</td>
+        </tr>
+        <tr>
+          <td><code>--no-cv</code></td>
+          <td>off</td>
+          <td>Skip CV entirely. Useful for <code>--force-step 6</code> quick reruns when you only changed pricing or want to test a WCB update.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>When to use <code>--no-cv</code>:</strong>
+      CV adds ~10× training time (one fit per fold + final fit). Use
+      <code>--no-cv</code> during rapid iteration (e.g. testing a WCB data
+      update). Run full CV before committing a checkpoint to production.
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════ 7. INFERENCE -->
   <section id="inference">
-    <h2><span class="num">6</span>Inference &amp; routing</h2>
+    <h2><span class="num">7</span>Inference &amp; routing</h2>
 
     <p>All heavy state (XGBoost model, task embeddings, registry, features) is
     loaded once at startup. Each <code>route()</code> call is ~2–4 ms.</p>
@@ -719,10 +899,6 @@ MathJax = {
     </div>
 
     <h3>Step 2 — Quality prediction (XGBoost)</h3>
-    <p>For each of the top-$k$ task types, the feature matrix is constructed
-    with the same masking as training (only one affinity column active).
-    XGBoost predicts a quality score for all models simultaneously:</p>
-
     <div class="formula">
       <div class="label">Similarity-weighted quality prediction</div>
       $$\hat{q}_m = \sum_{t \in \text{top-}k} \frac{\text{sim}(q,t)}{\sum_{t'} \text{sim}(q,t')} \cdot f_{\theta}(\mathbf{x}_{m,t})$$
@@ -759,9 +935,6 @@ MathJax = {
     </div>
 
     <h3>Degradation threshold mode</h3>
-    <p>Alternative routing strategy: accept any model within $\delta$ of the
-    best quality, then pick the cheapest in that band.</p>
-
     <div class="formula">
       <div class="label">Quality floor</div>
       $$q^{\text{floor}} = \hat{q}_{m^*_\text{quality}} \cdot (1 - \delta)$$
@@ -805,9 +978,9 @@ MathJax = {
     </table>
   </section>
 
-  <!-- ══════════════════════════════════════════════════════════ 7. CONFIG -->
+  <!-- ══════════════════════════════════════════════════════════ 8. CONFIG -->
   <section id="config">
-    <h2><span class="num">7</span>Runtime configuration</h2>
+    <h2><span class="num">8</span>Runtime configuration</h2>
 
     <p>All parameters below are read at startup and apply without retraining.</p>
 
@@ -840,13 +1013,16 @@ MathJax = {
     </table>
 
     <h3>Adding a new model</h3>
-    <pre><span class="c"># 1. Add entry to models.yaml</span>
-<span class="c"># 2. Re-run pipeline from step 1 (fetches AA data, rebuilds features, retrains)</span>
+    <pre><span class="c"># 1. Add entry to models.yaml (or let discover_models.py auto-populate)</span>
+<span class="c"># 2. Re-run pipeline from step 1 (fetches AA data, rebuilds features, retrains + CV)</span>
 uv run perf-pipeline --force-step <span class="num">1</span>
 
 <span class="c"># 3. (Optional) Run WCB on the new model and add its results to</span>
 <span class="c">#    data/wcb_training_labeled.csv, then retrain from step 6 only:</span>
-uv run perf-pipeline --force-step <span class="num">6</span> --wcb-csv data/wcb_training_labeled.csv</pre>
+uv run perf-pipeline --force-step <span class="num">6</span> --wcb-csv data/wcb_training_labeled.csv
+
+<span class="c"># 4. For a quick retrain without waiting for CV (e.g. during development):</span>
+uv run perf-pipeline --force-step <span class="num">6</span> --wcb-csv data/wcb_training_labeled.csv <span class="k">--no-cv</span></pre>
 
     <h3>WCB seed format</h3>
     <p><code>data/wcb_training_labeled.csv</code> must have at minimum these columns:</p>
