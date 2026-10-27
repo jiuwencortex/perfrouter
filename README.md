@@ -109,12 +109,13 @@ uv run perf-simulate \
 
 To use PerfRouter inside optmod:
 
-1. Copy these files into `routing/`:
-   - `perfrouter/inference/perf_router_inference.py`
-   - `data/task_taxonomy.json`
-   - `data/model_registry.json`
-   - `data/model_features.csv`
-   - `models/perf_router.pkl`
+1. Export the artifacts. The last pipeline step copies `perf_router.pkl`, `model_features.csv`,
+   `model_registry.json`, `task_taxonomy.json` and `models.yaml` into optmod's `routing/perfrouter/`:
+   ```bash
+   uv run python perfrouter/pipeline/run_perf_router_pipeline.py --export-only   # --optmod-dir to change the target
+   ```
+   A full run (`--force-step N`) also exports unless you pass `--no-export`. `inference.py` is not copied;
+   optmod keeps its own variant.
 
 2. In `routing/config.yaml`, set:
    ```yaml

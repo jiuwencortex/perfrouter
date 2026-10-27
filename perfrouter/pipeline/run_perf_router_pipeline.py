@@ -36,9 +36,20 @@ PIPELINE STEPS
     Computes task-type affinity scores and structural features per model.
     Outputs model_features.csv.
 
+  Step 3b — patch_taxonomy_agentic.py (runs with step 3)
+    Merges data/agentic_examples.json into task_taxonomy.json as
+    `agentic_examples` (inference-only; idempotent; adds no task types).
+
   Step 6 — train_perf_router.py
     Trains XGBoost on model_features.csv + WCB seed data.
     Outputs perf_router.pkl.
+
+  Step 7 — export to optmod
+    Copies perf_router.pkl, model_features.csv, model_registry.json,
+    task_taxonomy.json and models.yaml into optmod's routing/perfrouter/
+    (the standalone fallback copies optmod uses when ../perfrouter is absent).
+    inference.py is NOT copied: optmod keeps its own variant. Skipped when
+    --no-export is given or the optmod directory does not exist.
 
 ─────────────────────────────────────────────────────────────────────
 WHEN TO RUN EACH STEP
@@ -69,11 +80,14 @@ Usage:
   python3 run_perf_router_pipeline.py --force
   python3 run_perf_router_pipeline.py --force-step 5
   python3 run_perf_router_pipeline.py --dry-run
+  python3 run_perf_router_pipeline.py --export-only         # copy existing artifacts to optmod
+  python3 run_perf_router_pipeline.py --stop-after 6        # build without exporting
 ─────────────────────────────────────────────────────────────────────
 """
 
 import argparse
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -83,6 +97,7 @@ from pathlib import Path
 _PROJECT_ROOT = Path(__file__).parent.parent.parent
 _DATA_DIR     = _PROJECT_ROOT / "data"
 _MODELS_DIR   = _PROJECT_ROOT / "models"
+_OPTMOD_DIR   = Path.home() / "workspace" / "optmod" / "routing" / "perfrouter"
 
 
 # ── Terminal colours ──────────────────────────────────────────────────────────
@@ -163,6 +178,12 @@ def main():
     parser.add_argument("--weights",       default=str(_DATA_DIR / "benchmark_weights.json"))
     parser.add_argument("--features",      default=str(_DATA_DIR / "model_features.csv"))
     parser.add_argument("--router-out",    default=str(_MODELS_DIR / "perf_router.pkl"))
+    parser.add_argument("--optmod-dir",    default=str(_OPTMOD_DIR),
+                        help="optmod's routing/perfrouter/ directory (step 7 export target)")
+    parser.add_argument("--export-only",   action="store_true",
+                        help="Only run step 7: copy the existing artifacts into optmod (no fetch, no training)")
+    parser.add_argument("--no-export",     action="store_true",
+                        help="Do not copy artifacts into optmod (same as --stop-after 6)")
     parser.add_argument("--wcb-csv",       default=None,
                         help="Path to wcb_training_labeled.csv for XGBoost seeding")
 
@@ -170,9 +191,9 @@ def main():
     parser.add_argument("--force",         action="store_true",
                         help="Re-run all steps even if outputs exist")
     parser.add_argument("--force-step",    type=int, default=None, metavar="N",
-                        help="Re-run from step N onwards (0-6)")
-    parser.add_argument("--stop-after",    type=int, default=6, metavar="N",
-                        help="Stop after step N (default: 6)")
+                        help="Re-run from step N onwards (0-7)")
+    parser.add_argument("--stop-after",    type=int, default=7, metavar="N",
+                        help="Stop after step N (default: 7, the optmod export)")
     parser.add_argument("--dry-run",       action="store_true",
                         help="Print what would run without executing")
 
@@ -197,13 +218,16 @@ def main():
     features     = (HERE / args.features).resolve()
     router_out   = (HERE / args.router_out).resolve()
     wcb_csv      = Path(args.wcb_csv).expanduser().resolve() if args.wcb_csv else None
+    optmod_dir   = Path(args.optmod_dir).expanduser().resolve()
+    if args.no_export:
+        args.stop_after = min(args.stop_after, 6)
 
     # ── Forced steps ──────────────────────────────────────────────────────────
     forced: set[int] = set()
     if args.force:
-        forced = {0, 1, 2, 3, 4, 5, 6}
+        forced = {0, 1, 2, 3, 4, 5, 6, 7}
     elif args.force_step is not None:
-        forced = set(range(args.force_step, 7))
+        forced = set(range(args.force_step, 8))
 
     def is_forced(n): return n in forced
 
@@ -230,10 +254,16 @@ def main():
     pipeline_start = time.time()
     failed_step    = None
 
+    def wants(n: int) -> bool:
+        """Run step n? (not past --stop-after, nothing failed yet, build steps off for --export-only)"""
+        if args.export_only and n < 7:
+            return False
+        return args.stop_after >= n and failed_step is None
+
     # ─────────────────────────────────────────────────────────────────────────
     # STEP 0 — Discover and populate model pool from OpenRouter + AA
     # ─────────────────────────────────────────────────────────────────────────
-    if args.stop_after >= 0 and failed_step is None:
+    if wants(0):
         import yaml as _yaml
         with open(models_yaml, encoding="utf-8") as _f:
             _cfg = _yaml.safe_load(_f)
@@ -264,7 +294,7 @@ def main():
     # ─────────────────────────────────────────────────────────────────────────
     # STEP 1 — Fetch Artificial Analysis benchmark data
     # ─────────────────────────────────────────────────────────────────────────
-    if args.stop_after >= 1 and failed_step is None:
+    if wants(1):
         aa_args = [
             "--models", str(models_yaml),
             "--out",    str(registry),
@@ -288,7 +318,7 @@ def main():
     # ─────────────────────────────────────────────────────────────────────────
     # STEP 2 — Fetch Arena ELO scores
     # ─────────────────────────────────────────────────────────────────────────
-    if args.stop_after >= 2 and failed_step is None:
+    if wants(2):
         success = run_step(
             step_num    = 2,
             label       = "Fetch Arena.ai ELO scores",
@@ -307,7 +337,7 @@ def main():
     # Only runs if taxonomy already exists (first run skips — taxonomy must be
     # created manually via build_task_taxonomy.py once)
     # ─────────────────────────────────────────────────────────────────────────
-    if args.stop_after >= 3 and failed_step is None:
+    if wants(3):
         if taxonomy.exists():
             success = run_step(
                 step_num    = 3,
@@ -325,9 +355,26 @@ def main():
             warn(f"Run build_task_taxonomy.py once to generate the taxonomy.")
 
     # ─────────────────────────────────────────────────────────────────────────
+    # STEP 3b — Merge agent-style examples into the taxonomy (inference-only)
+    # ─────────────────────────────────────────────────────────────────────────
+    agentic_examples = _DATA_DIR / "agentic_examples.json"
+    if wants(3) and taxonomy.exists() and agentic_examples.exists():
+        success = run_step(
+            step_num    = 3,
+            label       = "Merge agentic examples into taxonomy (3b)",
+            script      = HERE / "patch_taxonomy_agentic.py",
+            args        = ["--taxonomy", str(taxonomy), "--examples", str(agentic_examples)],
+            output_file = None,
+            force       = True,
+            dry_run     = args.dry_run,
+        )
+        if not success:
+            failed_step = 3
+
+    # ─────────────────────────────────────────────────────────────────────────
     # STEP 4 — Rebuild benchmark weight matrix
     # ─────────────────────────────────────────────────────────────────────────
-    if args.stop_after >= 4 and failed_step is None:
+    if wants(4):
         if taxonomy.exists():
             success = run_step(
                 step_num    = 4,
@@ -349,7 +396,7 @@ def main():
     # ─────────────────────────────────────────────────────────────────────────
     # STEP 5 — Compute model feature vectors
     # ─────────────────────────────────────────────────────────────────────────
-    if args.stop_after >= 5 and failed_step is None:
+    if wants(5):
         feat_args = [
             "--registry", str(registry),
             "--weights",  str(weights),
@@ -373,7 +420,7 @@ def main():
     # ─────────────────────────────────────────────────────────────────────────
     # STEP 6 — Train PerfRouter XGBoost
     # ─────────────────────────────────────────────────────────────────────────
-    if args.stop_after >= 6 and failed_step is None:
+    if wants(6):
         train_args = [
             "--features",    str(features),
             "--out",         str(router_out),
@@ -393,6 +440,35 @@ def main():
         )
         if not success:
             failed_step = 6
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # STEP 7 — Export artifacts to optmod
+    # ─────────────────────────────────────────────────────────────────────────
+    exported: list[Path] = []
+    if wants(7):
+        head("Step 7 — Export to optmod")
+        if not optmod_dir.is_dir():
+            warn(f"optmod directory not found: {optmod_dir} — skipping export.")
+            warn("Pass --optmod-dir <path>/routing/perfrouter or --no-export.")
+        else:
+            artifacts = [router_out, features, registry, taxonomy, models_yaml]
+            missing = [a for a in artifacts if not a.exists()]
+            if missing and not args.dry_run:
+                for a in missing:
+                    err(f"Missing artifact: {a}")
+                failed_step = 7
+            else:
+                for src in artifacts:
+                    dst = optmod_dir / src.name
+                    info(f"{src}  →  {dst}")
+                    if args.dry_run:
+                        continue
+                    shutil.copy2(src, dst)
+                    exported.append(dst)
+                if args.dry_run:
+                    warn("DRY RUN — nothing copied.")
+                else:
+                    ok(f"Exported {len(exported)} files to {optmod_dir}")
 
     # ─────────────────────────────────────────────────────────────────────────
     # SUMMARY
@@ -429,11 +505,11 @@ def main():
                 else:
                     warn(f"{label:<25} {path.name}  (not produced)")
 
-            print(f"\n  To deploy in optmod:")
-            print(f"    cp {router_out} ~/workspace/optmod/routing/perfrouter/")
-            print(f"    cp {features}   ~/workspace/optmod/routing/perfrouter/")
-            print(f"    cp {registry}   ~/workspace/optmod/routing/perfrouter/")
-            print(f"    cp {taxonomy}   ~/workspace/optmod/routing/perfrouter/")
+            if exported:
+                print(f"\n  Exported to optmod ({optmod_dir}); review and commit there:")
+                print(f"    cd {optmod_dir.parent.parent} && git status routing/perfrouter")
+            else:
+                print(f"\n  Not exported to optmod (use --force-step 7, or copy the files in {optmod_dir}).")
 
         print()
 

@@ -203,15 +203,22 @@ Runtime environment variables (set in optmod's `routing/config.yaml` or env):
 
 ## optmod Integration
 
-Build artifacts that optmod needs are in `data/` and `models/`. After a
-pipeline run, copy them to optmod:
+Build artifacts that optmod needs are in `data/`, `models/` and `models.yaml`. The pipeline's
+last step (step 7) copies them into optmod's `routing/perfrouter/`, the standalone fallback optmod
+uses when this repo is not checked out next to it:
 
 ```bash
-cp models/perf_router.pkl         ~/workspace/optmod/routers/
-cp data/model_features.csv        ~/workspace/optmod/routers/
-cp data/model_registry.json       ~/workspace/optmod/routers/
-cp data/task_taxonomy.json        ~/workspace/optmod/routers/
+uv run python perfrouter/pipeline/run_perf_router_pipeline.py --export-only          # copy only
+uv run python perfrouter/pipeline/run_perf_router_pipeline.py --force-step 6          # retrain, then export
+uv run python perfrouter/pipeline/run_perf_router_pipeline.py --no-export             # build, don't copy
+# target: --optmod-dir (default ~/workspace/optmod/routing/perfrouter)
 ```
+
+Exported: `perf_router.pkl`, `model_features.csv`, `model_registry.json`, `task_taxonomy.json`
+(with `agentic_examples`, merged in step 3b from `data/agentic_examples.json`) and `models.yaml`.
+`perf_router_inference.py` is not copied: optmod keeps its own variant (`routing/perfrouter/inference.py`,
+same logic, different default paths and a `models_yaml_path` argument), so port inference changes by hand.
+Review and commit the result in optmod.
 
 The 10-model inference pool in optmod is a manually curated subset of
 whatever is in this training pool. XGBoost trains on all models here;
