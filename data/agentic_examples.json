@@ -1,0 +1,107 @@
+{
+  "_doc": "Agent-style task prompts per task type (long, file-path-heavy, multi-step). Merged into task_taxonomy.json as `agentic_examples` by pipeline/patch_taxonomy_agentic.py. Inference scores a query against the type definition AND each of these. Written from generic domains, never copied from a benchmark's task text, so benchmark replays stay a fair test.",
+  "examples": {
+    "code.debugging": [
+      "The test suite in /app/tests fails with a KeyError after the last refactor. Find the root cause in the source under /app/src, fix it without changing the tests, and make sure every test passes.",
+      "Our training script crashes with a CUDA out of memory error after 200 steps. Inspect /workspace/train.py and the config, find what leaks memory and patch it so the run completes.",
+      "The service in /srv/api returns wrong totals for orders with discounts. Reproduce the bug with the sample data, locate the faulty calculation, and fix it."
+    ],
+    "code.generation": [
+      "Implement a command line tool in /app/cli.py that reads a CSV of transactions and writes a per-customer summary as JSON. It must pass the checks in /app/tests/test_cli.py.",
+      "Write a Python module /app/scheduler.py that implements the interface described in /app/SPEC.md and add unit tests for it.",
+      "Build a small REST service with two endpoints described in /app/api.md, using only the standard library, and save it as /app/server.py."
+    ],
+    "code.puzzle_or_algorithm": [
+      "Write a program that finds the minimum-cost assignment of workers to shifts given the constraints in /app/problem.txt, and write the solution to /app/answer.json. A solution is accepted only if it is optimal.",
+      "Implement an efficient algorithm that, for the graph in /app/graph.json, computes the shortest route visiting all required nodes, and print the total length.",
+      "Solve the optimization puzzle described in /app/puzzle.md. Your solver must finish within the time limit on the hidden larger instances."
+    ],
+    "code.scientific_coding": [
+      "Using the measurements in /data/observations.csv, fit the model described in /data/README.md, estimate the parameters with uncertainties, and save the fitted values to /output/params.json.",
+      "Simulate the system described in /app/model.md with a numerical integrator, compare against the reference trajectory in /data/ref.npy, and tune the step size so the error stays below the stated tolerance.",
+      "Write a Python script that processes the raw sensor files in /data/raw, applies the calibration from /data/calibration.json, and computes the physical quantities requested in /app/task.md."
+    ],
+    "code.code_review": [
+      "Audit the source under /app/src for security vulnerabilities such as injection, unsafe deserialization and path traversal, and write each finding with file, line and severity to /app/report.json.",
+      "Review the patch in /app/change.diff for correctness and style problems and list the issues you find, ordered by importance.",
+      "Check the configuration files under /etc/service for insecure settings and produce a list of misconfigurations with recommended fixes."
+    ],
+    "retrieval.document_extraction": [
+      "Open the PDF at /root/invoice.pdf, extract the vendor name, invoice date, line items and total, and write them to /root/result.json using the schema in /root/schema.json.",
+      "Read the scanned forms in /root/forms and extract the filled-in fields of each one into a single spreadsheet /root/output.xlsx.",
+      "Parse the contract in /root/contract.docx, find every clause that mentions termination or renewal, and save the exact clause text with its section number to /root/clauses.json."
+    ],
+    "retrieval.repo_code_search": [
+      "Find where in the repository under /app the retry policy for outbound requests is configured, list every call site that overrides it, and write the file paths to /app/answer.txt.",
+      "Search the codebase for all usages of the deprecated function `load_legacy_config` and report each file and line.",
+      "Locate the module responsible for rendering invoices in /workspace/repo and explain which functions it calls to compute taxes."
+    ],
+    "retrieval.knowledge_qa": [
+      "Using the reference documents in /data/docs, answer the questions in /data/questions.txt and write short, precise answers to /data/answers.txt.",
+      "Look up the requirements in the standards documents provided under /data/standards and state which ones apply to the system described in /data/system.md."
+    ],
+    "retrieval.web_search": [
+      "Find the latest published version of the library mentioned in /app/notes.md and its release date, then record both in /app/versions.json.",
+      "Research the public documentation of the API in /app/README.md and list the rate limits and authentication methods it supports."
+    ],
+    "tool_use.file_or_system_operation": [
+      "Reorganize the files under /root/inbox into folders by year and document type, rename them with the pattern in /root/rules.md, and leave a log of every move in /root/moves.log.",
+      "Install the missing dependencies, fix the file permissions in /srv/app, and make sure the service starts and answers on port 8080.",
+      "Convert every spreadsheet in /root/data to CSV, merge them into /root/all.csv, and remove the originals only after verifying the row counts."
+    ],
+    "tool_use.multi_step_workflow": [
+      "First read /root/instructions.md, then process each input file in /root/inputs through the pipeline it describes, validate the intermediate results, and finally produce the combined report /root/report.json.",
+      "Collect the data from the three sources listed in /root/sources.txt, clean and join them, compute the metrics from the specification, and write the final table to /root/metrics.csv.",
+      "Set up the environment, run the analysis scripts in order, check each output against the expected format, and fix any step that fails before moving on."
+    ],
+    "tool_use.terminal_agent": [
+      "You are in a Linux sandbox with a broken build. Use the shell to find out why `make` fails, fix the problem in the source or the environment, and make sure `./run_tests.sh` passes.",
+      "Use the command line to inspect the files in /root, work out what has to be done from /root/TASK.md, carry it out with the tools available, and verify the result.",
+      "Compile the project in /workspace, run the benchmark binary, profile where the time goes, and apply changes until it runs at least twice as fast."
+    ],
+    "tool_use.api_chaining": [
+      "Use the provided HTTP API at http://localhost:8000 to look up the customer, fetch their orders, issue the refund for the failed one, and confirm the final state, writing each response to /root/trace.json.",
+      "Call the endpoints described in /root/openapi.yaml in the right order to create the resource, attach the files, and publish it, handling pagination and errors."
+    ],
+    "synthesis.structured_data": [
+      "Transform the nested JSON files in /root/input into a flat table with the columns defined in /root/columns.md and save it as /root/output.csv, keeping every record.",
+      "Convert the log lines in /root/app.log into structured JSON events with timestamp, level, component and message, and write one event per line to /root/events.jsonl.",
+      "Normalize the messy customer records in /root/customers.csv, deduplicate them, and write the cleaned data to /root/clean.csv with the schema from /root/schema.json."
+    ],
+    "synthesis.data_analysis_report": [
+      "Analyze the dataset in /data/measurements.csv, compute the statistics requested in /data/README.md, and write your findings and the numbers to /output/report.md and /output/results.json.",
+      "Examine the network capture summary in /data/traffic.json, identify anomalous hosts or intrusion patterns, and write a short report with evidence to /output/findings.md.",
+      "Using the sales spreadsheet in /data/sales.xlsx, compute monthly trends and outliers, build the requested charts, and write the analysis to /output/analysis.md."
+    ],
+    "synthesis.report_or_summary": [
+      "Read all the documents in /data/docs and write a one-page summary of the key decisions and open issues to /output/summary.md.",
+      "Summarize the incident logs in /data/incidents into a short timeline with root causes and follow-ups, and save it as /output/postmortem.md."
+    ],
+    "instruction.format_constraint": [
+      "Produce the result as a JSON file at /root/answer.json with exactly the keys and number formats given in the task, rounded to two decimals, because it is checked by an automatic script.",
+      "Write the output as a CSV with the header and column order specified in /root/format.md. A single wrong column name makes the whole answer fail."
+    ],
+    "instruction.complex_following": [
+      "Follow all the rules in /root/policy.md while processing the requests in /root/requests.json: some rules override others, and every exception must be recorded in /root/decisions.json with the rule that applied.",
+      "Complete the task under the following constraints: do not modify files outside /app/out, keep the runtime under one minute, use only the allowed libraries, and document each assumption you make."
+    ],
+    "reasoning.mathematical": [
+      "Given the model and data in /root/problem.md, derive the quantity asked for analytically, check it numerically, and write the final value with the required precision to /root/answer.txt.",
+      "Compute the expected value described in /root/task.md using the formulas from the provided notes and save the result with at least six significant digits."
+    ],
+    "reasoning.scientific": [
+      "Using the measurements in /data/sample.csv, determine the physical or chemical property described in /data/README.md, show the intermediate steps, and write the result with units to /output/answer.json.",
+      "Analyze the instrument data in /data/seismic.csv or /data/spectrum.csv according to the task notes, identify the event or feature asked for, and report its parameters."
+    ],
+    "reasoning.long_context": [
+      "Read the large set of documents in /data/corpus, cross-check the claims in /data/claims.txt against them, and mark each claim as supported, contradicted or unverifiable with the supporting passage.",
+      "Go through the full transcript in /data/meeting.txt and the attached reports and answer the detailed questions in /data/questions.md."
+    ],
+    "multimodal.diagram_understanding": [
+      "Look at the architecture diagram image at /root/diagram.png, list the components and the connections between them, and write them to /root/graph.json."
+    ],
+    "multimodal.visual_reasoning": [
+      "Inspect the images and charts in /root/figures, read the values off them, and use them to answer the questions in /root/questions.md."
+    ]
+  }
+}

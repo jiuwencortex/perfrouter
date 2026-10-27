@@ -118,6 +118,8 @@ DEFAULT_COST_WEIGHT    = float(os.environ.get("PERF_ROUTER_COST_WEIGHT", "0.3"))
 DEFAULT_TOP_K          = 3       # number of task types to consider per query
 DEFAULT_ENCODER        = "all-MiniLM-L6-v2"
 DEFAULT_MIN_SIMILARITY = 0.20   # below this → fallback_ambiguous
+DEFAULT_EXAMPLE_POOLING = "max"   # "max": similarity to the closest of definition/examples; "none": legacy
+DEFAULT_LOW_SIM_FALLBACK = "cheapest"   # "cheapest" | "general" (task-agnostic quality prior)
 
 
 # ── PerfRouterInference class ─────────────────────────────────────────────────
@@ -141,11 +143,18 @@ class PerfRouterInference:
         encoder_name:   str   = DEFAULT_ENCODER,
         baseline_model: str   = BASELINE_MODEL_ID,
         min_similarity_threshold: float = DEFAULT_MIN_SIMILARITY,
+        example_pooling:  str = DEFAULT_EXAMPLE_POOLING,
+        softmax_temperature: "float | None" = None,
+        low_sim_fallback: str = DEFAULT_LOW_SIM_FALLBACK,
     ):
         self.cost_weight               = cost_weight
         self.top_k                     = top_k
         self._baseline_model_id        = baseline_model
         self._min_similarity_threshold = min_similarity_threshold
+        self._example_pooling          = example_pooling
+        # None/0 → legacy linear similarity weights across the top-k task types
+        self._softmax_temperature      = softmax_temperature if softmax_temperature else None
+        self._low_sim_fallback         = low_sim_fallback
         self._ready                    = False
 
         try:
@@ -315,22 +324,36 @@ class PerfRouterInference:
         # At inference, the query embedding is compared against these via
         # cosine similarity to classify the task type.
         print(f"[PerfRouter] Pre-computing task type embeddings...")
-        task_type_texts = []
+        # Each type is scored against its definition text (legacy: definition + first 2
+        # examples) and, with example_pooling="max", also against each `agentic_examples`
+        # prompt (long, file-path-heavy agent tasks). A type's similarity to a query is the
+        # best of these, so one cluster of examples (PDFs, simulations, ...) is enough.
+        texts: list[str] = []
+        owners: list[int] = []
         self._task_type_ids_ordered = []
 
-        for task_type in self._task_types:
+        for ti, task_type in enumerate(self._task_types):
             meta       = self._taxonomy.get(task_type, {})
             definition = meta.get("definition", task_type.replace(".", " ").replace("_", " "))
             examples   = " ".join(meta.get("examples", [])[:2])
-            text       = f"{definition} {examples}".strip()
-            task_type_texts.append(text)
+            texts.append(f"{definition} {examples}".strip())
+            owners.append(ti)
+            if self._example_pooling == "max":
+                for ex in meta.get("agentic_examples", []) or []:
+                    texts.append(str(ex))
+                    owners.append(ti)
             self._task_type_ids_ordered.append(task_type)
 
-        self._task_embeddings = self._encoder.encode(
-            task_type_texts,
+        self._example_embeddings = self._encoder.encode(
+            texts,
             normalize_embeddings=True,
             show_progress_bar=False,
         )
+        self._example_owner = np.asarray(owners, dtype=np.int64)
+        self._n_task_types  = len(self._task_types)
+        # Legacy attribute: first row of each type (the definition text)
+        first_rows = [int(np.argmax(self._example_owner == ti)) for ti in range(self._n_task_types)]
+        self._task_embeddings = self._example_embeddings[first_rows]
         print(f"[PerfRouter] Ready. α={self.cost_weight}, top_k={self.top_k}, "
               f"min_sim={self._min_similarity_threshold}")
 
@@ -358,8 +381,11 @@ class PerfRouterInference:
 
         query_emb    = self._encoder.encode(query, normalize_embeddings=True,
                                             show_progress_bar=False)
-        # Cosine similarity (vectors are L2-normalised, so dot product = cosine sim)
-        similarities = self._task_embeddings @ query_emb
+        # Cosine similarity (vectors are L2-normalised, so dot product = cosine sim);
+        # a type's score is the best over its definition and example embeddings.
+        row_sims     = self._example_embeddings @ query_emb
+        similarities = np.full(self._n_task_types, -1.0, dtype=np.float32)
+        np.maximum.at(similarities, self._example_owner, row_sims)
         top_k_idx    = np.argsort(similarities)[::-1][:self.top_k]
         return [
             (self._task_type_ids_ordered[i], float(similarities[i]))
@@ -382,7 +408,15 @@ class PerfRouterInference:
         """
         import numpy as np
 
-        total_sim = sum(s for _, s in task_types_with_weights) or 1.0
+        if self._softmax_temperature:
+            # Softmax over similarities: a 0.01 gap is a near-tie (blend), a 0.1 gap is decisive.
+            sims  = np.array([s for _, s in task_types_with_weights], dtype=np.float64)
+            exps  = np.exp((sims - sims.max()) / self._softmax_temperature)
+            sw    = exps / exps.sum()
+            weights_by_idx = list(sw)
+        else:
+            total_sim = sum(s for _, s in task_types_with_weights) or 1.0
+            weights_by_idx = [s / total_sim for _, s in task_types_with_weights]
         quality_per_model = np.zeros(len(self._model_ids), dtype=np.float32)
 
         # Pre-compute affinity column indices once — same for every task type
@@ -391,8 +425,7 @@ class PerfRouterInference:
             if c.startswith("affinity_")
         ]
 
-        for task_type, sim_score in task_types_with_weights:
-            weight       = sim_score / total_sim
+        for (task_type, _sim), weight in zip(task_types_with_weights, weights_by_idx):
             affinity_col = "affinity_" + task_type.replace(".", "_", 1)
             col_idx      = (self._feature_cols.index(affinity_col)
                             if affinity_col in self._feature_cols else None)
@@ -512,6 +545,7 @@ class PerfRouterInference:
         routing_mode      = "normal"
         primary_task_type = "unknown"
         top_k_types       = []
+        quality_types: list | None = None   # task types/weights fed to the quality model
 
         if not query:
             routing_mode = "fallback_empty"
@@ -524,6 +558,11 @@ class PerfRouterInference:
                 # Low confidence — classifier is guessing on an ambiguous query.
                 # Route to cheapest eligible model rather than trusting the noise.
                 routing_mode = "fallback_ambiguous"
+                if self._low_sim_fallback == "general":
+                    # Agent prompts often match no type well; instead of the cheapest model use
+                    # the task-agnostic quality prior (every type weighted equally).
+                    routing_mode = "general_prior"
+                    quality_types = [(t, 1.0) for t in self._task_type_ids_ordered]
 
         # ── Step 2: Choose model ──────────────────────────────────────────────
         if routing_mode in ("fallback_ambiguous", "fallback_empty"):
@@ -537,7 +576,7 @@ class PerfRouterInference:
 
         else:
             # Normal path: predict quality then apply cost adjustment
-            quality     = self.predict_quality(top_k_types)
+            quality     = self.predict_quality(quality_types or top_k_types)
             quality_arr = np.array([quality[mid] for mid in self._model_ids],
                                    dtype=np.float32)
             # adjusted_utility = quality - α × normalised_cost
