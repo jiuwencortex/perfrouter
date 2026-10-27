@@ -180,6 +180,9 @@ def main():
     parser.add_argument("--router-out",    default=str(_MODELS_DIR / "perf_router.pkl"))
     parser.add_argument("--optmod-dir",    default=str(_OPTMOD_DIR),
                         help="optmod's routing/perfrouter/ directory (step 7 export target)")
+    parser.add_argument("--skip-discovery", action="store_true",
+                        help="Skip step 0 even if discovery.enabled (use after removing a model by hand, "
+                             "so discovery does not refill the pool)")
     parser.add_argument("--export-only",   action="store_true",
                         help="Only run step 7: copy the existing artifacts into optmod (no fetch, no training)")
     parser.add_argument("--no-export",     action="store_true",
@@ -269,7 +272,9 @@ def main():
             _cfg = _yaml.safe_load(_f)
         discovery_enabled = (_cfg or {}).get("discovery", {}).get("enabled", False)
 
-        if not discovery_enabled:
+        if args.skip_discovery:
+            skip("Step 0 — Model discovery skipped (--skip-discovery)")
+        elif not discovery_enabled:
             skip("Step 0 — Model discovery disabled (discovery.enabled: false)")
         else:
             disc_args = ["--models", str(models_yaml)]

@@ -586,24 +586,6 @@ models:
   price_cache_read_per_1M: 0.0
   license: unknown
   _discovered: true
-- id: qwen/qwen3.8-27b:free
-  aa_slug: qwen3-8-27b
-  provider: qwen
-  local: false
-  free: true
-  total_params_B: null
-  active_params_B: null
-  context_window_k: 262
-  effective_context_k: 131
-  supports_vision: true
-  supports_tools: true
-  is_reasoning: false
-  has_thinking_mode: false
-  price_input_per_1M: 0.0
-  price_output_per_1M: 0.0
-  price_cache_read_per_1M: 0.0
-  license: unknown
-  _discovered: true
 - id: z-ai/glm-5.2
   aa_slug: glm-5-2
   provider: z-ai
