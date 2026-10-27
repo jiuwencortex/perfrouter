@@ -1,0 +1,342 @@
+{
+ "_doc": "Acceptable task-type sets per SkillsBench task (first = primary). Labelled by Claude from the first ~300 characters of each task.md; noisy, treat as a rough yardstick, not ground truth.",
+ "labels": {
+  "3d-scan-calc": [
+   "code.scientific_coding",
+   "synthesis.structured_data"
+  ],
+  "ada-bathroom-plan-repair": [
+   "tool_use.multi_step_workflow",
+   "code.generation"
+  ],
+  "adaptive-cruise-control": [
+   "code.scientific_coding",
+   "code.generation"
+  ],
+  "azure-bgp-oscillation-route-leak": [
+   "synthesis.data_analysis_report",
+   "code.scientific_coding"
+  ],
+  "bike-rebalance": [
+   "code.puzzle_or_algorithm",
+   "reasoning.mathematical"
+  ],
+  "citation-check": [
+   "retrieval.knowledge_qa",
+   "retrieval.document_extraction",
+   "retrieval.web_search"
+  ],
+  "civ6-adjacency-optimizer": [
+   "code.puzzle_or_algorithm"
+  ],
+  "court-form-filling": [
+   "retrieval.document_extraction",
+   "tool_use.file_or_system_operation"
+  ],
+  "crystallographic-wyckoff-position-analysis": [
+   "code.scientific_coding",
+   "reasoning.scientific"
+  ],
+  "dapt-intrusion-detection": [
+   "synthesis.data_analysis_report",
+   "synthesis.structured_data",
+   "code.scientific_coding"
+  ],
+  "data-to-d3": [
+   "code.generation"
+  ],
+  "debug-trl-grpo": [
+   "code.debugging"
+  ],
+  "dialogue-parser": [
+   "code.generation",
+   "synthesis.structured_data"
+  ],
+  "drone-planning-control": [
+   "code.scientific_coding",
+   "code.generation"
+  ],
+  "dynamic-object-aware-egomotion": [
+   "multimodal.visual_reasoning",
+   "code.scientific_coding"
+  ],
+  "earthquake-phase-association": [
+   "code.scientific_coding",
+   "reasoning.scientific"
+  ],
+  "earthquake-plate-calculation": [
+   "synthesis.data_analysis_report",
+   "code.scientific_coding"
+  ],
+  "econ-detrending-correlation": [
+   "synthesis.data_analysis_report",
+   "reasoning.mathematical",
+   "code.scientific_coding"
+  ],
+  "edit-pdf": [
+   "tool_use.file_or_system_operation",
+   "retrieval.document_extraction"
+  ],
+  "energy-ac-optimal-power-flow": [
+   "code.scientific_coding",
+   "reasoning.mathematical",
+   "code.puzzle_or_algorithm"
+  ],
+  "energy-market-pricing": [
+   "reasoning.mathematical",
+   "synthesis.data_analysis_report",
+   "code.scientific_coding"
+  ],
+  "energy-unit-commitment": [
+   "code.puzzle_or_algorithm",
+   "code.scientific_coding"
+  ],
+  "enterprise-information-search": [
+   "retrieval.knowledge_qa",
+   "retrieval.document_extraction"
+  ],
+  "exam-block-sequencing": [
+   "code.puzzle_or_algorithm"
+  ],
+  "exceltable-in-ppt": [
+   "tool_use.file_or_system_operation",
+   "synthesis.structured_data"
+  ],
+  "exoplanet-detection-period": [
+   "code.scientific_coding",
+   "synthesis.data_analysis_report"
+  ],
+  "financial-modeling-qa": [
+   "synthesis.data_analysis_report",
+   "retrieval.knowledge_qa"
+  ],
+  "fix-build-agentops": [
+   "code.debugging",
+   "tool_use.terminal_agent"
+  ],
+  "fix-build-google-auto": [
+   "code.debugging",
+   "tool_use.terminal_agent"
+  ],
+  "fix-druid-loophole-cve": [
+   "code.debugging",
+   "code.code_review"
+  ],
+  "fix-erlang-ssh-cve": [
+   "code.debugging",
+   "code.code_review"
+  ],
+  "fix-visual-stability": [
+   "code.debugging",
+   "code.code_review"
+  ],
+  "flink-query": [
+   "code.generation",
+   "synthesis.data_analysis_report"
+  ],
+  "flood-risk-analysis": [
+   "synthesis.data_analysis_report",
+   "code.scientific_coding"
+  ],
+  "glm-lake-mendota": [
+   "code.scientific_coding",
+   "tool_use.terminal_agent"
+  ],
+  "gravitational-wave-detection": [
+   "code.scientific_coding",
+   "reasoning.scientific"
+  ],
+  "grid-dispatch-operator": [
+   "code.puzzle_or_algorithm",
+   "code.scientific_coding",
+   "reasoning.mathematical"
+  ],
+  "hvac-control": [
+   "code.scientific_coding",
+   "code.generation"
+  ],
+  "invoice-fraud-detection": [
+   "synthesis.data_analysis_report",
+   "retrieval.document_extraction"
+  ],
+  "jax-computing-basics": [
+   "code.generation",
+   "code.scientific_coding"
+  ],
+  "jpg-ocr-stat": [
+   "retrieval.document_extraction",
+   "multimodal.visual_reasoning"
+  ],
+  "lab-unit-harmonization": [
+   "synthesis.structured_data",
+   "synthesis.data_analysis_report"
+  ],
+  "lake-warming-attribution": [
+   "synthesis.data_analysis_report"
+  ],
+  "latex-formula-extraction": [
+   "retrieval.document_extraction"
+  ],
+  "lean4-proof": [
+   "reasoning.mathematical",
+   "code.generation"
+  ],
+  "llm-prefix-cache-replay": [
+   "synthesis.data_analysis_report",
+   "code.scientific_coding"
+  ],
+  "manufacturing-codebook-normalization": [
+   "synthesis.structured_data"
+  ],
+  "manufacturing-equipment-maintenance": [
+   "retrieval.knowledge_qa",
+   "synthesis.data_analysis_report"
+  ],
+  "manufacturing-fjsp-optimization": [
+   "code.puzzle_or_algorithm"
+  ],
+  "mario-coin-counting": [
+   "multimodal.visual_reasoning"
+  ],
+  "mars-clouds-clustering": [
+   "code.scientific_coding",
+   "code.puzzle_or_algorithm"
+  ],
+  "multilingual-video-dubbing": [
+   "tool_use.multi_step_workflow"
+  ],
+  "offer-letter-generator": [
+   "tool_use.file_or_system_operation"
+  ],
+  "organize-messy-files": [
+   "tool_use.file_or_system_operation"
+  ],
+  "paper-anonymizer": [
+   "tool_use.file_or_system_operation",
+   "retrieval.document_extraction"
+  ],
+  "parallel-tfidf-search": [
+   "code.generation",
+   "code.puzzle_or_algorithm"
+  ],
+  "paratransit-routing": [
+   "code.puzzle_or_algorithm"
+  ],
+  "pddl-airport-planning": [
+   "code.puzzle_or_algorithm",
+   "reasoning.logical_puzzle"
+  ],
+  "pddl-tpp-planning": [
+   "code.puzzle_or_algorithm",
+   "reasoning.logical_puzzle"
+  ],
+  "pdf-excel-diff": [
+   "retrieval.document_extraction",
+   "synthesis.data_analysis_report"
+  ],
+  "powerlifting-coef-calc": [
+   "synthesis.data_analysis_report",
+   "synthesis.structured_data"
+  ],
+  "pptx-reference-formatting": [
+   "tool_use.file_or_system_operation",
+   "instruction.format_constraint"
+  ],
+  "protein-expression-analysis": [
+   "synthesis.data_analysis_report"
+  ],
+  "python-scala-translation": [
+   "code.generation"
+  ],
+  "quantum-numerical-simulation": [
+   "code.scientific_coding",
+   "reasoning.scientific"
+  ],
+  "r2r-mpc-control": [
+   "code.scientific_coding",
+   "code.generation"
+  ],
+  "radar-vital-signs": [
+   "code.scientific_coding",
+   "synthesis.data_analysis_report"
+  ],
+  "react-performance-debugging": [
+   "code.debugging",
+   "code.code_review"
+  ],
+  "reserves-at-risk-calc": [
+   "synthesis.data_analysis_report",
+   "reasoning.mathematical"
+  ],
+  "sales-pivot-analysis": [
+   "synthesis.data_analysis_report",
+   "synthesis.structured_data"
+  ],
+  "sec-financial-report": [
+   "synthesis.data_analysis_report",
+   "retrieval.knowledge_qa"
+  ],
+  "seismic-phase-picking": [
+   "code.scientific_coding",
+   "reasoning.scientific"
+  ],
+  "setup-fuzzing-py": [
+   "tool_use.terminal_agent",
+   "tool_use.multi_step_workflow"
+  ],
+  "shock-analysis-demand": [
+   "synthesis.data_analysis_report",
+   "reasoning.mathematical"
+  ],
+  "shock-analysis-supply": [
+   "synthesis.data_analysis_report",
+   "reasoning.mathematical"
+  ],
+  "simpo-code-reproduction": [
+   "code.generation",
+   "code.scientific_coding"
+  ],
+  "software-dependency-audit": [
+   "code.code_review",
+   "synthesis.data_analysis_report"
+  ],
+  "spring-boot-jakarta-migration": [
+   "code.generation",
+   "tool_use.terminal_agent"
+  ],
+  "suricata-custom-exfil": [
+   "code.generation"
+  ],
+  "syzkaller-ppdev-syzlang": [
+   "code.generation"
+  ],
+  "threejs-structure-parser": [
+   "code.code_review",
+   "synthesis.structured_data"
+  ],
+  "threejs-to-obj": [
+   "code.generation"
+  ],
+  "tictoc-unnecessary-abort-detection": [
+   "code.puzzle_or_algorithm",
+   "synthesis.data_analysis_report"
+  ],
+  "travel-planning": [
+   "tool_use.multi_step_workflow",
+   "retrieval.web_search"
+  ],
+  "video-silence-remover": [
+   "tool_use.multi_step_workflow",
+   "code.scientific_coding"
+  ],
+  "weighted-gdp-calc": [
+   "synthesis.data_analysis_report",
+   "tool_use.file_or_system_operation"
+  ],
+  "xlsx-recover-data": [
+   "synthesis.data_analysis_report",
+   "tool_use.file_or_system_operation",
+   "synthesis.structured_data"
+  ]
+ }
+}
